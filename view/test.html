@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Vue test</title>
+    <!-- Theme CSS -->
+    <!--<link rel="stylesheet" href="assets/css/style.css">-->
+
+</head>
+
+<body>
+
+    <div id="app">
+        {{message}}
+        <!--用雙大括號包住要寫入資料的元素-->
+    </div>
+    <!--各v-特殊特性-->
+    <div id="app-1">
+        <span v-once>Message:{{msg}}</span>
+        <!--once讓值只能被改變一次-->
+    </div>
+    <div id="app-2">
+        <span v-bind:title="message">
+            <!--v-bind寫入元素屬性內容，此塊表示span的title設為message並利用Vue將title的內容寫入-->
+            <!--更新html屬性-->
+            <!---bind縮寫 v-bind:href="" = :href=""-->
+            停住看效果
+        </span>
+    </div>
+    <div id="app-3">
+        <p v-if="seen">你看得到我</p>
+        <!--if顯示/消失-->
+    </div>
+    <div id="app-4">
+        <ol>
+            <li v-for="todo in todos">
+                <!--for迴圈綁定一組資料，一次性寫入項目中-->
+                {{todo.text}}
+            </li>
+        </ol>
+    </div>
+    <div id="app-5">
+        <p>{{message}}</p>
+        <button v-on:click="reverseMessage">逆轉消息</button>
+        <!--on監聽器，當button click觸發時執行方法reverseMessage-->
+        <!---on縮寫 v-on:click="" = @click=""-->
+    </div>
+    <div id="app-5-1">
+
+        <p>輸入文字:<input v-model="message"></p>
+        <p>原始文字:{{message}}</p>
+        <p>Reversed message: "{{ reverseMessage() }}"</p>
+        <p>逆轉文字:{{reversedMessage}}</p>
+        <!--當文字逆轉 改為用計算屬性、方法寫入，可重複使用-->
+    </div>
+
+    <div id="app-6">
+
+        <p>{{message}}</p>
+        <input v-model="message">
+        <!--model將message設為p message的參考值,下方message修改時上方會同步修改顯示-->
+    </div>
+
+    <div id="app-7">
+        <p>輸出html樣式{{rawHtml}}</p>
+        <!---html特性定義css、html格式，直接用{{}}會出現單純的文字-->
+        <!--寫入整串html-->
+
+        <p>正確輸出html樣式<span v-html="rawHtml"></span></p>
+    </div>
+    <!--************** about content End **************-->
+
+    <!-- jQuery -->
+
+    <!--<script src="assets/js/script.js"></script>-->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        /*初始值設定
+        data: {
+        newTodoText: '',文字
+        visitCount: 0,數字
+        hideCompletedTodos: false,布林
+        todos: [],陣列
+        error: null 物件
+        }*/
+
+        /*Object.freeze() 停止系統追蹤變化*/
+
+        /*Vue 生命週期
+        beforeCreate:vue create前，ex.執行一些自定義的程式
+        created:vue create後 el宣告前，ex.利用ajax向後台請求資料，初始化畫面資料、登入資訊判定
+        beforeMount:el宣告後 el設定值前
+        mounted:el設定值後 資料更新前，ex.此時程式皆已初始化完成，可根據需求操作html內容
+        beforeUpdate:el設定值後 資料更新前
+        updated:資料更新後
+        beforeDestroy:vue銷毀前
+        destroyed:vue銷毀後
+        ex.
+        new Vue({
+          data: {
+            a: 1
+          },
+          created: function () {
+            // `this` 指向 vm 实例
+            console.log('a is: ' + this.a)
+          }
+        })
+        // => "a is: 1"*/
+        new Vue({/*vue生命週期實例*/
+            data: {
+                a: 1
+            },
+            beforeCreate: function () {
+                // `this` 指向 vm 实例
+                console.log('a is: ' + this.a)
+            },
+            created: function () {
+                // `this` 指向 vm 实例
+                console.log('a is: ' + this.a)
+            }
+        })
+
+        var app = new Vue({
+            el: '#app',/*用單引號，用class、id找到要影響得元素*/
+            data: { message: 'hello Vue!' }/*data 寫入資料到元素中*/
+        })
+
+        var app1 = new Vue({
+            el: '#app-1',
+            data: { msg: '這只能使用一次' }
+        })
+
+        var app2 = new Vue({
+            el: '#app-2',
+            data: {
+                message: '頁面加載於' + new Date().toDateString()/*不用;*/
+            }
+        })
+
+        var app3 = new Vue({
+            el: '#app-3',
+            data: {
+                seen: true
+            }
+        })
+
+        var app4 = new Vue({/*利用app4.todos.push({ text: '新项目' })增加新項目*/
+            el: '#app-4',
+            data: {
+                todos: [
+                    { text: '學JS' },
+                    { text: '學css' },
+                    { text: '學Vue' }
+                ]
+            }
+        })
+
+        var app5 = new Vue({/*定義一開始的message，並在按鈕觸發時執行reverseMessage方法*/
+            el: '#app-5',
+            data: {
+                message: 'Hello Vue.js!'
+            },
+            methods: {
+                reverseMessage: function () {
+                    this.message = this.message.split('').reverse().join('')/*split()將字串分割/reverse()顛倒順序/join()將字符合併*/
+                }
+            }
+        })
+
+        var app5_1 = new Vue({
+            el: '#app-5-1',
+            data: {
+                message: 'Hello!'
+            },
+            // 在组件中
+            methods: {
+                reverseMessage: function () {
+                    return this.message.split('').reverse().join('')
+                }
+            },
+            computed: {//計算屬性的getter
+                reversedMessage: function () {
+                    //'this'指向app5-1裡的實例
+                    return this.message.split('').reverse().join('')
+                }
+            },
+        })
+
+        var app6 = new Vue({
+            el: '#app-6',
+            data: {
+                message: 'Hello Vue!'
+            }
+        })
+
+        var app7 = new Vue({
+            el: '#app-7',
+            data: {
+                rawHtml: '<span style="color: red">This should be red.</span>'
+            }
+        })
+    </script>
+</body>
+
+</html>
